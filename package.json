@@ -1,0 +1,27 @@
+{
+  "name": "bg-tap-project1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node src/scripts/loadRolesTable.js&& node src/scripts/loadStatesTable.js&&node src/scripts/loadLgasTable.js&&npm run start",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "db-migrate": "^0.11.13",
+    "db-migrate-pg": "^1.3.0",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "multer": "^1.4.5-lts.1",
+    "nodemon": "^2.0.22",
+    "pg": "^8.10.0",
+    "validator": "^13.9.0"
+  }
+}
