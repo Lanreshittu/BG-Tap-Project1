@@ -34,11 +34,17 @@ const validateRole = (role) => {
     let conn;
     try {
       conn = await pool.connect();
+      const allRoleSql = "SELECT role from roles;";
+      const allRoleResult = await conn.query(allRoleSql);
+      const allUserRole = allRoleResult.rows;
+
       const roleSql = "SELECT * from roles where role =($1);";
       const roleResult = await conn.query(roleSql, [role.toLowerCase()]);
       const userRole = roleResult.rows;
       if (!userRole.length) {
-        reject("please provide a valid role");
+        reject({
+          "please provide a valid role from this list of roles": allUserRole,
+        });
       }
       resolve("empty");
     } catch (error) {

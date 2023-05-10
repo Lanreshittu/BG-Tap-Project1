@@ -1,4 +1,8 @@
-const { completeOperatorRegistration } = require("../DAO/OperatorDAO");
+const {
+  completeOperatorRegistration,
+  verifyOperator,
+  createOperatorSelection,
+} = require("../DAO/OperatorDAO");
 const { getStates, getlgas } = require("../DAO/StatesandLgaDAO");
 
 operatorVerification = async (req, res) => {
@@ -41,9 +45,9 @@ operatorRegistrationCompletion = async (req, res) => {
   }
 };
 
-operatorChoiceCreation = async (req, res) => {
+operatorSelectionCreation = async (req, res) => {
   try {
-    let result = await createOperatorChoice(req);
+    let result = await createOperatorSelection(req);
     res.status(201).json({ result });
   } catch (error) {
     console.log("error creating choice", error);
@@ -55,5 +59,5 @@ module.exports = {
   operatorStates,
   operatorLgas,
   operatorRegistrationCompletion,
-  operatorChoiceCreation,
+  operatorSelectionCreation,
 };

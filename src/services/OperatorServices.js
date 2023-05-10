@@ -180,7 +180,7 @@ const validateOperatorData = (req) => {
 };
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//validation for operator's choice data
+//validation for operator's Selection data
 
 const checkCorrectProductAndSeedTypeId = (
   operator_id,
@@ -219,7 +219,7 @@ const checkCorrectProductAndSeedTypeId = (
         });
 
       const sql =
-        "SELECT * from operators_choice where operator_id =($1) and seed_type_id =($2) and product_id=($3)";
+        "SELECT * from operators_selections where operator_id =($1) and seed_type_id =($2) and product_id=($3)";
       const result = await conn.query(sql, [
         operator_id,
         seed_type_id,
@@ -237,7 +237,7 @@ const checkCorrectProductAndSeedTypeId = (
   });
 };
 
-const validateOperatorChoice = (req, operator_id) => {
+const validateOperatorSelection = (req, operator_id) => {
   return new Promise(async (resolve, reject) => {
     try {
       const { product_id, seed_type_id } = req.body;
@@ -267,5 +267,5 @@ const validateOperatorChoice = (req, operator_id) => {
 
 module.exports = {
   validateOperatorData,
-  validateOperatorChoice,
+  validateOperatorSelection,
 };

@@ -4,6 +4,11 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const user = require("./src/routes/userRoutes");
 const operator = require("./src/routes/OperatorRoutes");
+const {
+  requireOperatorRole,
+  requireAdminRole,
+} = require("./src/middleware/authorization");
+const admin = require("./src/routes/AdminRoutes");
 
 const port = process.env.PORT;
 const app = express();
@@ -22,9 +27,9 @@ app.get("/", (req, res) => {
 
 app.use("/user", user);
 
-app.use("/operator", operator);
+app.use("/operator", requireOperatorRole, operator);
 
-//app.use("/admin", requireAdminRole, admin);
+app.use("/admin", requireAdminRole, admin);
 
 // for an unknown Url
 

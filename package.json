@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node src/scripts/loadRolesTable.js&& node src/scripts/loadStatesTable.js&&node src/scripts/loadLgasTable.js&&npm run start",
+    "dev": "npx db-migrate up&&node src/scripts/loadRolesTable.js&& node src/scripts/loadStatesTable.js&&node src/scripts/loadLgasTable.js&&node src/scripts/loadProductTable.js&&node src/scripts/loadSeedTypeTable.js&&npm run start",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon index.js"
   },

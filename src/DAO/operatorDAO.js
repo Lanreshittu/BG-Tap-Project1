@@ -5,17 +5,21 @@ const jwt = require("jsonwebtoken");
 
 const { getUserIdFromToken } = require("../utils/Token");
 const fs = require("fs");
-const { validateOperatorData } = require("../services/OperatorServices");
+const {
+  validateOperatorData,
+  validateOperatorSelection,
+} = require("../services/OperatorServices");
 
 const verifyOperator = (req) => {
   return new Promise(async (resolve, reject) => {
+    let conn;
     try {
       const { isverified } = req.body;
-      const { opeartor_regid } = req.params;
+      const { id } = req.params;
 
-      const conn = await pool.connect();
-      const sqlCheck = "SELECT * from operators where opeartor_regid =($1);";
-      const resultCheck = await conn.query(sqlCheck, [opeartor_regid]);
+      conn = await pool.connect();
+      const sqlCheck = "SELECT * from operators where id =($1);";
+      const resultCheck = await conn.query(sqlCheck, [id]);
       const rowsCheck = resultCheck.rows[0];
       if (!rowsCheck) {
         reject("No operator with this ID");
@@ -26,15 +30,19 @@ const verifyOperator = (req) => {
         );
       } else {
         const sql =
-          "UPDATE operators SET isverified = ($1) WHERE opeartor_regid = ($2) RETURNING *;";
-        const result = await conn.query(sql, [isverified, opeartor_regid]);
-        const rows = result.rows[0];
-
-        conn.release();
-        resolve(rows);
+          "UPDATE operators SET isverified = ($1) WHERE id = ($2) RETURNING *;";
+        const result = await conn.query(sql, [isverified, id]);
+        const rows = result.rows[0].isverified;
+        if (rows) {
+          resolve("operator is now verified");
+        } else {
+          resolve("operator is yet to be verified");
+        }
       }
     } catch (error) {
       reject(error);
+    } finally {
+      conn.release();
     }
   });
 };
@@ -104,25 +112,26 @@ const completeOperatorRegistration = (req) => {
   });
 };
 
-const createOperatorChoice = (req) => {
+const createOperatorSelection = (req) => {
   return new Promise(async (resolve, reject) => {
+    let conn;
     try {
-      const opeartor_regid = await getOperatorRegIdFromToken(req);
+      const user_id = await getUserIdFromToken(req);
       const { product_id, seed_type_id } = req.body;
 
-      const conn = await pool.connect();
+      conn = await pool.connect();
 
       // Get the operator_id
       const productSql =
-        "SELECT operator_id FROM operatorsprofile WHERE opeartor_regid = ($1)";
+        "SELECT operator_id FROM operators WHERE user_id = ($1)";
 
-      const operatorResult = await conn.query(productSql, [opeartor_regid]);
+      const operatorResult = await conn.query(productSql, [user_id]);
       const operator_id = operatorResult.rows[0].operator_id;
 
-      await validateOperatorChoice(req, operator_id);
+      await validateOperatorSelection(req, operator_id);
 
       ////////
-      const sql = `INSERT INTO operators_choice(
+      const sql = `INSERT INTO operators_selections(
                 operator_id, product_id, seed_type_id)
                 VALUES ($1, $2, $3)
                     RETURNING *;`;
@@ -132,11 +141,13 @@ const createOperatorChoice = (req) => {
       const result = await conn.query(sql, values);
       const operatorChoice = result.rows[0];
 
-      conn.release();
-
       resolve(operatorChoice);
     } catch (error) {
       reject(error);
+    } finally {
+      if (conn) {
+        conn.release();
+      }
     }
   });
 };
@@ -144,5 +155,5 @@ const createOperatorChoice = (req) => {
 module.exports = {
   verifyOperator,
   completeOperatorRegistration,
-  createOperatorChoice,
+  createOperatorSelection,
 };

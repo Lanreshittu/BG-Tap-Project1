@@ -7,14 +7,15 @@ const {
   operatorStates,
   operatorLgas,
   operatorRegistrationCompletion,
+  operatorSelectionCreation,
 } = require("../controllers/OperatorController");
-const { requireOperatorRole } = require("../middleware/authorization");
+const { operatorVerificationStatus } = require("../middleware/authorization");
 
 const upload = multer({ dest: "uploads/" });
 
 operator.post(
   "/completeregistration",
-  requireOperatorRole,
+
   upload.single("picture"),
   operatorRegistrationCompletion
 );
@@ -23,10 +24,10 @@ operator.get("/states", operatorStates);
 
 operator.get("/states/:state_id/lgas", operatorLgas);
 
-// operator.post(
-//   "/productselection",
-//   operatorVerificationStatus,
-//   operatorChoiceCreation
-// );
+operator.post(
+  "/productselection",
+  operatorVerificationStatus,
+  operatorSelectionCreation
+);
 
 module.exports = operator;
